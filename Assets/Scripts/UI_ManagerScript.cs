@@ -18,6 +18,7 @@ public class UI_ManagerScript : MonoBehaviour
     private Sprite[] _lifeSprites;
 
     private Image _lifeImage;
+    [SerializeField]
     private bool _isCoop;
     // Start is called before the first frame update
     void Start()
@@ -31,7 +32,7 @@ public class UI_ManagerScript : MonoBehaviour
         // score
         SetScoreText(0);
         
-        if(_isCoop) SetBestScoreText(PlayerPrefs.GetInt("BestScore", 0));
+        if(!_isCoop) SetBestScoreText(PlayerPrefs.GetInt("BestScore", 0));
     }
 
     // Update is called once per frame
