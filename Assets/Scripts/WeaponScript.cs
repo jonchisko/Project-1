@@ -25,7 +25,8 @@ public class WeaponScript : MonoBehaviour
 
     // Audio
     private AudioSource _aSource;
-
+    [SerializeField]
+    private bool _isPlayerOne;
 
     // Start is called before the first frame update
     void Start()
@@ -46,7 +47,16 @@ public class WeaponScript : MonoBehaviour
     void FireWeapon()
     {
         // laser firing
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time >= _canFire)
+        bool isPressing;
+        if (_isPlayerOne)
+        {
+            isPressing = Input.GetKeyDown(KeyCode.Space);
+        }
+        else
+        {
+            isPressing = Input.GetKeyDown(KeyCode.RightControl);
+        }
+        if (isPressing && Time.time >= _canFire)
         {
             Fire();
             _aSource.Play();

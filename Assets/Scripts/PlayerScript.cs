@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class PlayerScript : MonoBehaviour
     public delegate void OnScoreChange(int score);
     public static OnScoreChange playerScoreEvent;
     public static OnScoreChange playerLifeEvent;
+    public static OnScoreChange playerBestScoreEvent;
 
     // speed variable
     [SerializeField]
@@ -46,19 +48,46 @@ public class PlayerScript : MonoBehaviour
     [SerializeField]
     private GameObject _explosion;
 
+    [SerializeField]
+    private bool _isPlayerOne;
 
+
+    private Animator _animControler;
 
     // you could set up this in start tho
     private static int _playerScore = 0;
+    private static int _bestScore = 0;
 
+    GameManagerScript gManager;
 
-
+    private void Awake()
+    {
+        _bestScore = LoadBestScore();
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        _animControler = GetComponent<Animator>();
+        gManager = GameObject.Find("Game_Manager")?.GetComponent<GameManagerScript>();
+        if (gManager == null) Debug.LogError("PlayerScript::Start() -> gManager is missing.");
         // set player at 0, 0, 0 at the beginning!  
-        transform.position = new Vector3(0, 0, 0);
+        if(gManager.IsCoop())
+        {
+            if (gameObject.name == "Player1")
+            {
+                transform.position = new Vector3(-5, 0, 0);
+            }
+            else
+            {
+                transform.position = new Vector3(5, 0, 0);
+            }
+        }
+        else
+        {
+            transform.position = new Vector3(0, 0, 0);
+        }
+        
         _tmpSpeed = _speedVariable;
         _shieldVisual.SetActive(false);
         
@@ -81,8 +110,21 @@ public class PlayerScript : MonoBehaviour
 
     void CalculateMovement()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+        float horizontalInput;
+        float verticalInput;
+        if (_isPlayerOne)
+        {
+            horizontalInput = Input.GetAxis("Horizontal");
+            verticalInput = Input.GetAxis("Vertical");
+        }
+        else
+        {
+            horizontalInput = Input.GetAxis("Horizontal2");
+            verticalInput = Input.GetAxis("Vertical2");
+        }
+
+        _animControler.SetInteger("Direction", Mathf.RoundToInt(horizontalInput));
+
         Vector3 movementDirection = (Vector3.right * horizontalInput + Vector3.up * verticalInput).normalized;
         transform.Translate(movementDirection * _speedVariable * Time.deltaTime);
         transform.position = RestrictMovement(transform.position);
@@ -125,6 +167,12 @@ public class PlayerScript : MonoBehaviour
         _shieldVisual.SetActive(true);
     }
 
+
+    int LoadBestScore()
+    {
+        return PlayerPrefs.GetInt("BestScore", 0);
+    }
+
     IEnumerator SpeedPowerUpCoroutine()
     {
         _speedVariable = _bonusSpeed;
@@ -135,6 +183,11 @@ public class PlayerScript : MonoBehaviour
     public static void IncreaseScore(int amount)
     {
         _playerScore += amount;
+        if(_playerScore > _bestScore)
+        {
+            _bestScore = _playerScore;
+            playerBestScoreEvent?.Invoke(_bestScore);
+        }
         playerScoreEvent?.Invoke(_playerScore);
     }
 
@@ -155,10 +208,21 @@ public class PlayerScript : MonoBehaviour
             playerLifeEvent?.Invoke(_lives);
             if (_lives < 1)
             {
+                PlayerPrefs.SetInt("BestScore", _bestScore);
                 playerDiedEvent?.Invoke();
                 Instantiate(_explosion, transform.position, Quaternion.identity);
                 Destroy(this.gameObject);
             }
+        }
+    }
+
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "EnemyLaser")
+        {
+            TakeLife(); 
+            Destroy(collision.gameObject);
         }
     }
 

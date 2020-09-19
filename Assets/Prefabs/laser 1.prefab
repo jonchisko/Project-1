@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4658665267645142593}
   - component: {fileID: 4658665267645142606}
   m_Layer: 0
-  m_Name: laser
+  m_Name: laser 1
   m_TagString: Bullet1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b030d335857201646be69703e678d6e5, type: 3}
-  m_Color: {r: 1, g: 0.033018887, b: 0.033018887, a: 1}
+  m_Color: {r: 0.07843137, g: 1, b: 0.89954334, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

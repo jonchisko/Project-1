@@ -22,4 +22,14 @@ public class MainMenuScript : MonoBehaviour
         SceneManager.LoadScene("Game");
     }
 
+    public void PlayGameCoopButton()
+    {
+        SceneManager.LoadScene("CoopGame");
+    }
+
+    public void QuitGameButton()
+    {
+        Application.Quit();
+    }
+
 }

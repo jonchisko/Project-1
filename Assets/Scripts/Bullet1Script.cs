@@ -10,7 +10,7 @@ public class Bullet1Script : MonoBehaviour
 
     // max y bullet can reach before it is destroyed
     private float _maxY = 10.0f;
-
+    private float _minY = -10.0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,11 +33,12 @@ public class Bullet1Script : MonoBehaviour
     void DestroyBullet()
     {
         // clean the bullet if out of game world
-        if(transform.position.y >= _maxY)
+        if(transform.position.y >= _maxY || transform.position.y <= _minY)
         {
             if (this.transform.parent != null && this.transform.parent.name == "TripleShot(Clone)") Destroy(this.transform.parent.gameObject);
             Destroy(this.gameObject);
         }
     }
+
 
 }

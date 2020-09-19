@@ -14,6 +14,7 @@ public class EnemyScript : MonoBehaviour
     private float _minXRand = -8.0f;
     private float _maxXRand = 8.0f;
 
+    private EnemyFireScript _enemyFire;
 
     private Animator _animController;
     private BoxCollider2D _boxCol;
@@ -24,6 +25,12 @@ public class EnemyScript : MonoBehaviour
         _animController = GetComponent<Animator>();
         _boxCol = GetComponent<BoxCollider2D>();
         _aSource = GetComponent<AudioSource>();
+        _enemyFire = GetComponent<EnemyFireScript>();
+
+        if(_enemyFire == null)
+        {
+            Debug.LogError("EnemyScript::Start -> _enemyFire is missing.");
+        }
 
         if(_animController == null)
         {
@@ -78,6 +85,7 @@ public class EnemyScript : MonoBehaviour
             // damage the player
             _animController.SetTrigger("EnemyDestroyed");
             _boxCol.enabled = false;
+            _enemyFire.SetCanFire(false);
             _aSource.Play();
             _speed = 0;
             other.GetComponent<PlayerScript>()?.TakeLife();
@@ -93,6 +101,7 @@ public class EnemyScript : MonoBehaviour
             IncreaseScore();
             _animController.SetTrigger("EnemyDestroyed");
             _boxCol.enabled = false;
+            _enemyFire.SetCanFire(false);
             _aSource.Play();
             _speed = 0;
             Destroy(other.gameObject);

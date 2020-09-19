@@ -9,6 +9,8 @@ public class UI_ManagerScript : MonoBehaviour
     [SerializeField]
     private Text _scoreText;
     [SerializeField]
+    private Text _bestScoreText;
+    [SerializeField]
     private GameObject _gameOverObject;
     [SerializeField]
     private GameObject _restartLevelObject;
@@ -16,7 +18,7 @@ public class UI_ManagerScript : MonoBehaviour
     private Sprite[] _lifeSprites;
 
     private Image _lifeImage;
-
+    private bool _isCoop;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,6 +30,8 @@ public class UI_ManagerScript : MonoBehaviour
         _lifeImage.sprite = _lifeSprites[3];
         // score
         SetScoreText(0);
+        
+        if(_isCoop) SetBestScoreText(PlayerPrefs.GetInt("BestScore", 0));
     }
 
     // Update is called once per frame
@@ -38,8 +42,14 @@ public class UI_ManagerScript : MonoBehaviour
 
     void SetScoreText(int amount)
     {
-        _scoreText.text = string.Format("Score:{0, 10}", amount);
+        _scoreText.text = string.Format("Score:{0, 1}", amount);
     }
+
+    void SetBestScoreText(int amount)
+    {
+        _bestScoreText.text = string.Format("Best score:{0, 1}", amount);
+    }
+
 
     void SetLifeSprite(int life)
     {
@@ -53,12 +63,14 @@ public class UI_ManagerScript : MonoBehaviour
     private void OnEnable()
     {
         PlayerScript.playerScoreEvent += SetScoreText;
+        PlayerScript.playerBestScoreEvent += SetBestScoreText;
         PlayerScript.playerLifeEvent += SetLifeSprite;
     }
 
     private void OnDisable()
     {
         PlayerScript.playerScoreEvent -= SetScoreText;
+        PlayerScript.playerBestScoreEvent -= SetBestScoreText;
         PlayerScript.playerLifeEvent -= SetLifeSprite;
     }
 

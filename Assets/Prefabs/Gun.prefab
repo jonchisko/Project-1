@@ -51,3 +51,4 @@ MonoBehaviour:
   _bulletContainer: {fileID: 0}
   _tripleShotTimer: 3
   _tripleShotEnabled: 0
+  _isPlayerOne: 1
